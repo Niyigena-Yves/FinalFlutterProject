@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "79402290024",
+    "project_id": "alu-connect-yves",
+    "storage_bucket": "alu-connect-yves.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:79402290024:android:fe68d70fa891d61253a4dd",
+        "android_client_info": {
+          "package_name": "com.example.alu_connect"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAHB9Nyzyr3YjmhNd4O6P4h5MlJOfAf4nI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
