@@ -1,0 +1,47 @@
+{
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "alu-connect-yves",
+          "appId": "1:79402290024:android:fe68d70fa891d61253a4dd",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "ios": {
+        "default": {
+          "projectId": "alu-connect-yves",
+          "appId": "1:79402290024:ios:8bdb4c7210e9fde853a4dd",
+          "uploadDebugSymbols": false,
+          "fileOutput": "ios/Runner/GoogleService-Info.plist"
+        }
+      },
+      "macos": {
+        "default": {
+          "projectId": "alu-connect-yves",
+          "appId": "1:79402290024:ios:8bdb4c7210e9fde853a4dd",
+          "uploadDebugSymbols": false,
+          "fileOutput": "macos/Runner/GoogleService-Info.plist"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "alu-connect-yves",
+          "configurations": {
+            "android": "1:79402290024:android:fe68d70fa891d61253a4dd",
+            "ios": "1:79402290024:ios:8bdb4c7210e9fde853a4dd",
+            "macos": "1:79402290024:ios:8bdb4c7210e9fde853a4dd",
+            "web": "1:79402290024:web:e3be93897e13731653a4dd",
+            "windows": "1:79402290024:web:27bcf9f1cea47cd453a4dd"
+          }
+        }
+      }
+    }
+  },
+  "firestore": {
+    "database": "(default)",
+    "location": "africa-south1",
+    "rules": "firestore.rules",
+    "indexes": "firestore.indexes.json"
+  }
+}

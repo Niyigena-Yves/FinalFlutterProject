@@ -1,0 +1,71 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(uid) {
+      return isSignedIn() && request.auth.uid == uid;
+    }
+
+    // users/{uid}
+    match /users/{uid} {
+      allow read: if isSignedIn();
+      allow create: if isOwner(uid);
+      allow update: if isOwner(uid);
+      allow delete: if false;
+
+      match /bookmarks/{opportunityId} {
+        allow read, write: if isOwner(uid);
+      }
+    }
+
+    // startups/{startupId}
+    match /startups/{startupId} {
+      allow read: if isSignedIn();
+      allow create: if isSignedIn(); // any signed-in user can request a startup profile
+      // Only the founders can edit basic info; only a server-side admin
+      // function should ever flip verificationStatus to 'verified'.
+      allow update: if isSignedIn() &&
+        request.auth.uid in resource.data.founderUids &&
+        request.resource.data.verificationStatus == resource.data.verificationStatus;
+      allow delete: if false;
+    }
+
+    // opportunities/{opportunityId}
+    match /opportunities/{opportunityId} {
+      allow read: if isSignedIn();
+      // Posting requires the linked startup to already be verified —
+      // enforced by checking the referenced startup document.
+      allow create: if isSignedIn() &&
+        get(/databases/$(database)/documents/startups/$(request.resource.data.startupId)).data.verificationStatus == 'verified';
+      allow update: if isSignedIn() && (
+        // Founders can edit any field (post details, close it, etc.)
+        get(/databases/$(database)/documents/startups/$(resource.data.startupId)).data.founderUids.hasAny([request.auth.uid])
+        ||
+        // Any signed-in user may increment applicantCount by exactly 1 and
+        // touch nothing else — this is what happens when a student applies.
+        (request.resource.data.diff(resource.data).affectedKeys().hasOnly(['applicantCount']) &&
+         request.resource.data.applicantCount == resource.data.applicantCount + 1)
+      );
+      allow delete: if false;
+    }
+
+    // applications/{applicationId}
+    match /applications/{applicationId} {
+      allow read: if isSignedIn() && (
+        request.auth.uid == resource.data.studentUid ||
+        get(/databases/$(database)/documents/startups/$(get(/databases/$(database)/documents/opportunities/$(resource.data.opportunityId)).data.startupId)).data.founderUids.hasAny([request.auth.uid])
+      );
+      allow create: if isSignedIn() && request.auth.uid == request.resource.data.studentUid;
+      // Only the founder of the startup that owns the related opportunity
+      // may change an application's status (applied -> interview -> accepted/rejected).
+      allow update: if isSignedIn() &&
+        get(/databases/$(database)/documents/startups/$(get(/databases/$(database)/documents/opportunities/$(resource.data.opportunityId)).data.startupId)).data.founderUids.hasAny([request.auth.uid]);
+      allow delete: if false;
+    }
+  }
+}
